@@ -61,3 +61,6 @@ def sortvideos(catalog, size, metodo_ord):
     return model.sortvideos(catalog, size, metodo_ord)
 
 # Funciones de consulta sobre el catálogo
+def requerimiento1 (catalog, pais, categoria):
+    req_1 = model.requerimiento1(catalog, pais, categoria)
+    return req_1

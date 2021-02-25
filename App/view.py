@@ -37,11 +37,11 @@ operación solicitada
 def printMenu():
     print("Bienvenido. ")
     print("1- Cargar información en el catálogo. ")
-    print("2- ordensa los videos por viwes. ")
-    print("2- Videos con mas vistas, tendencia en un pais con determinada categoria. ")
-    print("3- Video que mas dia ha sido trending en un pais. ")
-    print("4- Video que mas dia ha sido trending segun la categoria. ")
-    print("5- Videos con mas likes en un pais con un tag especifico. ")
+    print("2- ordenar los videos por viwes. ")
+    print("3- Videos con mas vistas, tendencia en un pais con determinada categoria. ")
+    print("4- Video que mas dia ha sido trending en un pais. ")
+    print("5- Video que mas dia ha sido trending segun la categoria. ")
+    print("6- Videos con mas likes en un pais con un tag especifico. ")
     print("0- Salir. ")
 
 
@@ -54,8 +54,11 @@ def initCatalogLINKED():
 def loadData(catalog):
     controller.loadData(catalog)
 
-
 catalog = None
+
+def print_requerimiento1 (catalogo, pais, categoria):
+    controller.requerimiento1(catalogo, pais, categoria)
+    pass
 
 def printResults(ord_books, sample=10):
     size = lt.size(ord_books)
@@ -95,14 +98,19 @@ while True:
 
     elif int(inputs[0]) == 2:
         size= int(input("ingrese el tamaño de la muestra a ordenar: "))
-        metodo_ord = input("Seleccione el metodo de ordenamiento: \n 1- Selection. \n 2- Insertion \n 3- Sheel\n"  )
-        result = controller.sortvideos(catalog, size, metodo_ord)
-        print("Para la muestra de", size, " elementos, el tiempo (mseg) es: ",
-                                            str(result[0]))
-        
+        if size <= int(lt.size(catalog['videos'])):
+            metodo_ord = input("Seleccione el metodo de ordenamiento: \n 1- Selection. \n 2- Insertion \n 3- Sheel\n"  )
+            result = controller.sortvideos(catalog, size, metodo_ord)
+            print("Para la muestra de", size, " elementos, el tiempo (mseg) es: ",
+                                                str(result[0]))
+        else: 
+            print( "el tamaño de la muestra excede la cantidad de datos disponibles")
     
     elif int(inputs[0]) == 3:
-        pass
+        pais = input("buscando en el pais: ")
+        categoria =input( "buscando en la categoria: ")
+        print(controller.requerimiento1 (catalog, pais, categoria))
+
     
     elif int(inputs[0]) == 4:
         pass

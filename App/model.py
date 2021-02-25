@@ -31,6 +31,7 @@ from DISClib.Algorithms.Sorting import shellsort as sa
 assert cf
 from DISClib.Algorithms.Sorting import insertionsort as insert
 from DISClib.Algorithms.Sorting import selectionsort as selecc
+from DISClib.DataStructures import listiterator as it
 
 """
 Se define la estructura de un catálogo de videos. El catálogo tendrá dos listas, una para los videos, otra para las categorias de
@@ -47,14 +48,16 @@ def newCatalogARRAY():
     catalog = {'videos': None,
                'categorias': None,
                'paises':None,
-               'tag':None}
+               'tag':None,
+               'videosporcategoria': None}
     
     catalog['videos'] = lt.newList('ARRAY_LIST', cmpfunction = funcompare) 
-    catalog['categorias'] = lt.newList('ARRAY_LIST', 
+    catalog['categorias'] = lt.newList('ARRAY_LIST' ,
                                        cmpfunction = comparecategory)
     catalog['paises'] = lt.newList('ARRAY_LIST', 
                                    cmpfunction = comparecountry)
     catalog['tag'] =lt.newList()
+    catalog['videosporcategoria']= {}
 
     return catalog
 
@@ -65,14 +68,16 @@ def newCatalogLINKED():
     catalog = {'videos': None,
                'categorias': None,
                'paises':None,
-               'tag':None}
-    
+               'tag':None,
+               'videosporcategoria': None}
+        
     catalog['videos'] = lt.newList('SINGLE_LINKED', cmpfunction = funcompare)
     catalog['categorias'] = lt.newList('SINGLE_LINKED', 
                                        cmpfunction = comparecategory)
     catalog['paises'] = lt.newList('SINGLE_LINKED', 
                                    cmpfunction = comparecountry)
     catalog['tag'] =lt.newList()
+    catalog['videosporcategoria']= {}
 
     return catalog
 
@@ -86,6 +91,15 @@ def addvideo(catalog, video):
     paises = video['country']
     newcountry(catalog, paises.strip(), video)
     newcategory(catalog, categorias.strip(), video)
+    if categorias in catalog['videosporcategoria']:
+        if paises in categorias:
+            lt.addLast(catalog['videosporcategoria'][categorias][paises], video)
+        else:
+            catalog['videosporcategoria'][categorias][paises] = lt.newList()
+            lt.addLast(catalog['videosporcategoria'][categorias][paises], video)   
+            
+    else: 
+        catalog['videosporcategoria'][categorias]= {}
 
 
 def newcategory(catalog, categorynumber, video):
@@ -128,6 +142,12 @@ def addnewcountry(countryname):
 
 
 # Funciones de consulta
+def requerimiento1 (catalog, pais, categoria):
+    lista= catalog['videosporcategoria'][categoria][pais]
+    return lista
+
+
+    
 
 # Funciones utilizadas para comparar elementos dentro de una lista
 
