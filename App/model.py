@@ -32,6 +32,9 @@ assert cf
 from DISClib.Algorithms.Sorting import insertionsort as insert
 from DISClib.Algorithms.Sorting import selectionsort as selecc
 from DISClib.DataStructures import listiterator as it
+from DISClib.Algorithms.Sorting import quicksort as qck
+from DISClib.Algorithms.Sorting import mergesort as marg
+
 
 """
 Se define la estructura de un catálogo de videos. El catálogo tendrá dos listas, una para los videos, otra para las categorias de
@@ -194,6 +197,11 @@ def sortvideos(catalog, size, metodo_ord):
         sorted_list = insert.sort(sub_list, cmpVideosByViews)
     elif metodo_ord == "3":
         sorted_list = sa.sort(sub_list, cmpVideosByViews)
+    elif metodo_ord == "4":
+        sorted_list = qck.sort(sub_list, cmpVideosByViews)
+    elif metodo_ord == "5":
+        sorted_list = marg.sort(sub_list, cmpVideosByViews)
+        
     stop_time = time.process_time()
     elapsed_time_mseg = (stop_time - start_time)*1000
     return elapsed_time_mseg, sorted_list

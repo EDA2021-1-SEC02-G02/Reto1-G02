@@ -25,6 +25,8 @@ import sys
 import controller
 from DISClib.ADT import list as lt
 assert cf
+import sys
+ 
 
 
 """
@@ -71,6 +73,9 @@ def printResults(ord_books, sample=10):
                 book['isbn'] + ' Rating: ' + book[''])
             i+=1
 
+default_limit = 1000
+sys.setrecursionlimit(default_limit*10)
+
 """
 Menu principal
 """
@@ -99,7 +104,7 @@ while True:
     elif int(inputs[0]) == 2:
         size= int(input("ingrese el tamaño de la muestra a ordenar: "))
         if size <= int(lt.size(catalog['videos'])):
-            metodo_ord = input("Seleccione el metodo de ordenamiento: \n 1- Selection. \n 2- Insertion \n 3- Sheel\n"  )
+            metodo_ord = input("Seleccione el metodo de ordenamiento: \n 1- Selection Sort\n 2- Insertion Sort\n 3- Sheel Sort\n 4- Quick Sort\n 5- Merge Sort\n")
             result = controller.sortvideos(catalog, size, metodo_ord)
             print("Para la muestra de", size, " elementos, el tiempo (mseg) es: ",
                                                 str(result[0]))
