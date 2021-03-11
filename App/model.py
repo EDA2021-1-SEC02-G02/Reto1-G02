@@ -170,6 +170,12 @@ def requerimiento2(catalog, pais):
                 
             trendingvideo= lt.firstElement(listavideosord)
             return trendingvideo
+
+def requerimiento3():
+    pass
+
+def requerimiento4():
+    pass
     
 
 
