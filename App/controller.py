@@ -24,30 +24,14 @@ import config as cf
 import model
 import csv
 
-
-"""
-El controlador se encarga de mediar entre la vista y el modelo.
-"""
-
 # Inicialización del Catálogo de libros
 def initCatalogARRAY():
-    """
-    llamada la funcion de Inicialización del catalogo
-    """
     catalog = model.newCatalogARRAY()
     return catalog
-
-def initCatalogLINKED():
-    catalog = model.newCatalogLINKED()
-    return catalog
-
 
 # Funciones para la carga de datos
 
 def loadData(catalog):
-    """
-    carga los datos de los archivos en la estructura de datos
-    """
     loadVideos(catalog)
 
 def loadVideos(catalog):
@@ -57,10 +41,13 @@ def loadVideos(catalog):
         model.addvideo(catalog, video) 
 
 # Funciones de ordenamiento
-def sortvideos(catalog, size, metodo_ord):
-    return model.sortvideos(catalog, size, metodo_ord)
+
 
 # Funciones de consulta sobre el catálogo
-def requerimiento1 (catalog, pais, categoria):
-    req_1 = model.requerimiento1(catalog, pais, categoria)
+def requerimiento1 (catalog, pais, categoria, cantidad):
+    req_1 = model.requerimiento1(catalog, pais, categoria, int(cantidad))
     return req_1
+
+def requerimiento2(catalog, pais):
+    req_2 = model.requerimiento2(catalog, pais)
+    return req_2

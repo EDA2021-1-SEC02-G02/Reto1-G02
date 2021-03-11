@@ -39,28 +39,22 @@ operación solicitada
 def printMenu():
     print("Bienvenido. ")
     print("1- Cargar información en el catálogo. ")
-    print("2- ordenar los videos por viwes. ")
-    print("3- Videos con mas vistas, tendencia en un pais con determinada categoria. ")
-    print("4- Video que mas dia ha sido trending en un pais. ")
-    print("5- Video que mas dia ha sido trending segun la categoria. ")
-    print("6- Videos con mas likes en un pais con un tag especifico. ")
+    print("2- Req_1. Videos con mas vistas, tendencia en un pais con determinada categoria. ")
+    print("3- Req_2. Video que mas dia ha sido trending en un pais. ")
+    print("4- Req_3. Video que mas dia ha sido trending segun la categoria. ")
+    print("5- Req_4. Videos con mas likes en un pais con un tag especifico. ")
     print("0- Salir. ")
 
 
 def initCatalogARRAY():
     return controller.initCatalogARRAY()
 
-def initCatalogLINKED():
-    return controller.initCatalogLINKED()
 
 def loadData(catalog):
     controller.loadData(catalog)
 
 catalog = None
 
-def print_requerimiento1 (catalogo, pais, categoria):
-    controller.requerimiento1(catalogo, pais, categoria)
-    pass
 
 def printResults(ord_books, sample=10):
     size = lt.size(ord_books)
@@ -82,43 +76,40 @@ Menu principal
 while True:
     printMenu()
     inputs = input('Seleccione una opción para continuar\n')
-    if int(inputs[0]) == 1:
-        inputs = input('Selecciona la estructura de datos que desea usar\n 1- ARRAY_LIST.\n 2-LINKED_LIST\n')
-        print("Cargando información de los archivos ....")
-        
-        if int(inputs[0]) == 1:
-            catalog = initCatalogARRAY()
-            loadData(catalog)
-            print('Libros cargados: ' + str(lt.size(catalog['videos'])))
-            print('videos cargados por categorias: ' + str(lt.size(catalog['categorias'])))
-            print('videos cargados por paises: ' + str(lt.size(catalog['paises'])))
-
-            
-        if int(inputs[0]) == 2:
-            catalog = initCatalogLINKED()
-            loadData(catalog)
-            print('Libros cargados: ' + str(lt.size(catalog['videos'])))
-            print('videos cargados por categorias: ' + str(lt.size(catalog['categorias'])))
-            print('videos cargados por paises: ' + str(lt.size(catalog['paises'])))
-
-    elif int(inputs[0]) == 2:
-        size= int(input("ingrese el tamaño de la muestra a ordenar: "))
-        if size <= int(lt.size(catalog['videos'])):
-            metodo_ord = input("Seleccione el metodo de ordenamiento: \n 1- Selection Sort\n 2- Insertion Sort\n 3- Sheel Sort\n 4- Quick Sort\n 5- Merge Sort\n")
-            result = controller.sortvideos(catalog, size, metodo_ord)
-            print("Para la muestra de", size, " elementos, el tiempo (mseg) es: ",
-                                                str(result[0]))
-        else: 
-            print( "el tamaño de la muestra excede la cantidad de datos disponibles")
     
-    elif int(inputs[0]) == 3:
+    if int(inputs[0]) == 1:
+        print("Cargando información de los archivos ....")
+        catalog = initCatalogARRAY()
+        loadData(catalog)
+
+        print('\nLibros cargados: ' + str(lt.size(catalog['videos'])))
+        print('\nvideos cargados por categorias: ' + str(lt.size(catalog['categorias'])))
+        print('\nvideos cargados por paises: ' + str(lt.size(catalog['paises'])))
+        firstvideo = lt.firstElement(catalog['videos'])
+        print('Informacion del primer video cargado: ',
+              firstvideo['title'],",",firstvideo['channel_title'],",",firstvideo['trending_date'],
+              ",",firstvideo['country'],",",firstvideo['views'],",",firstvideo['likes'],",",firstvideo['dislikes'],".")
+
+    # requerimiento 1
+    
+    elif int(inputs[0]) == 2:
         pais = input("buscando en el pais: ")
         categoria =input( "buscando en la categoria: ")
-        print(controller.requerimiento1 (catalog, pais, categoria))
+        cantidad= input("cantidad de videos: ")
+        print(controller.requerimiento1 (catalog, pais, categoria, cantidad))
 
+    #requerimiento 2
     
+    elif int(inputs[0]) == 3:
+        pais= input("buscando en el pais: ")
+        print(controller.requerimiento2(catalog, pais))
+    
+    # requerimiento 3.
+   
     elif int(inputs[0]) == 4:
         pass
+   
+    # requerimiento 4.
     
     elif int(inputs[0]) == 5:
         pass

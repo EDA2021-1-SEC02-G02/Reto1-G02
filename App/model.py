@@ -42,8 +42,6 @@ los mismos.
 """
 
 # Construccion de modelos
-
-
 def newCatalogARRAY():
     """
     inicializa el catalogo de video y su informacion
@@ -51,40 +49,19 @@ def newCatalogARRAY():
     catalog = {'videos': None,
                'categorias': None,
                'paises':None,
-               'tag':None,
-               'videosporcategoria': None}
+               'paisescat': None,
+               'tag':None}
     
     catalog['videos'] = lt.newList('ARRAY_LIST', cmpfunction = funcompare) 
-    catalog['categorias'] = lt.newList('ARRAY_LIST' ,
-                                       cmpfunction = comparecategory)
-    catalog['paises'] = lt.newList('ARRAY_LIST', 
-                                   cmpfunction = comparecountry)
+    catalog['categorias'] = lt.newList('ARRAY_LIST' , cmpfunction = comparecategory)
+    catalog['paises'] = lt.newList('ARRAY_LIST', cmpfunction = comparecountry)
+    catalog['paisescat']= lt.newList('ARRAY_LIST', cmpfunction = comparecountry1)
     catalog['tag'] =lt.newList()
-    catalog['videosporcategoria']= {}
+    
+    lt.addLast(catalog['paisescat'], {})
 
     return catalog
-
-def newCatalogLINKED():
-    """
-    inicializa el catalogo de video y su informacion
-    """
-    catalog = {'videos': None,
-               'categorias': None,
-               'paises':None,
-               'tag':None,
-               'videosporcategoria': None}
-        
-    catalog['videos'] = lt.newList('SINGLE_LINKED', cmpfunction = funcompare)
-    catalog['categorias'] = lt.newList('SINGLE_LINKED', 
-                                       cmpfunction = comparecategory)
-    catalog['paises'] = lt.newList('SINGLE_LINKED', 
-                                   cmpfunction = comparecountry)
-    catalog['tag'] =lt.newList()
-    catalog['videosporcategoria']= {}
-
-    return catalog
-
-
+"-------------------------------------------------------------------------------------------------------"
 # Funciones para agregar informacion al catalogo
 
 def addvideo(catalog, video):
@@ -94,15 +71,7 @@ def addvideo(catalog, video):
     paises = video['country']
     newcountry(catalog, paises.strip(), video)
     newcategory(catalog, categorias.strip(), video)
-    if categorias in catalog['videosporcategoria']:
-        if paises in categorias:
-            lt.addLast(catalog['videosporcategoria'][categorias][paises], video)
-        else:
-            catalog['videosporcategoria'][categorias][paises] = lt.newList()
-            lt.addLast(catalog['videosporcategoria'][categorias][paises], video)   
-            
-    else: 
-        catalog['videosporcategoria'][categorias]= {}
+    newpaiscat(catalog, paises.strip(), categorias.strip(), video)
 
 
 def newcategory(catalog, categorynumber, video):
@@ -125,9 +94,26 @@ def newcountry(catalog, countryname, video):
         country = addnewcountry(countryname)
         lt.addLast(paises, country)
     lt.addLast(country['videos'], video)
-      
+    
 
 
+def newpaiscat(catalog, pais, categoria, video):
+    paiscat = catalog['paisescat']
+    dic = lt.getElement(paiscat, 1)
+    if pais in dic:
+        categorias = dic[pais]
+        if categoria in categorias:
+            lt.addLast(categorias[categoria], video)
+        else:
+            addnewcategorycat(categorias, categoria, video)
+    else:
+        dic = addnewcountrycat(dic, pais) 
+        categorias= dic[pais]
+        addnewcategorycat(categorias, categoria, video)
+
+       
+
+"--------------------------------------------------------------------------------------------------------"
 # Funciones para creacion de datos
 
 def addnewcategory(categorynumber):
@@ -136,7 +122,6 @@ def addnewcategory(categorynumber):
     category['videos'] = lt.newList('ARRAY_LIST')
     return category
 
-
 def addnewcountry(countryname):
     country = {'name_country': "", "videos": None}
     country['name_country'] = countryname
@@ -144,14 +129,51 @@ def addnewcountry(countryname):
     return country
 
 
+def addnewcountrycat(dic, countryname):
+    dic[countryname]= {}
+    return dic
+
+def addnewcategorycat(dic, categorynumber, video):
+    
+    dic[str(categorynumber)]= lt.newList('ARRAY_LIST')
+    lt.addLast(dic[str(categorynumber)], video)
+    return dic
+
+"----------------------------------------------------------------------------------------------------------"
 # Funciones de consulta
-def requerimiento1 (catalog, pais, categoria):
-    lista= catalog['videosporcategoria'][categoria][pais]
-    return lista
-
-
+def requerimiento1 (catalog, pais, categoria, cantidad):
+    paises= lt.getElement(catalog['paisescat'],1)
+    pais= paises[pais][categoria]
+    lista_ordenada= qck.sort(pais, cmpVideosByViews)
+    lista_retornar= lt.newList('ARRAY_LIST')
+    iterador= it.newIterator(lista_ordenada)
+    i=0
+    while (it.hasNext(iterador)) and i<cantidad:
+        elemento= it.next(iterador)
+        lt.addLast(lista_retornar, elemento)
+        i+=1
+    return lista_retornar
+    
     
 
+def requerimiento2(catalog, pais):
+    paises= catalog['paises']
+    iterador= it.newIterator(paises)
+    while it.hasNext(iterador):
+        elemento= it.next(iterador)
+        if elemento['name_country']== str(pais):
+            listavideosord= elemento['videos']
+            iteradorb= it.newIterator(listavideosord)
+            while it.hasNext(iteradorb):
+                elemento= it.next(iteradorb)
+                # añadir un dict 
+                
+            trendingvideo= lt.firstElement(listavideosord)
+            return trendingvideo
+    
+
+
+"---------------------------------------------------------------------------------------------------"
 # Funciones utilizadas para comparar elementos dentro de una lista
 
 def comparecategory(categorynumber1, category):
@@ -165,14 +187,21 @@ def comparecountry(countryname1, country):
         return 0
     return -1
 
+def comparecountry1(countryname1, country):
+    if (countryname1.lower() == country['pais'].lower()):
+        return 0
+    return -1
+
+
+def comparetrending(video1, video2):
+    if video1['trending_date'] < video2['trending_date']:
+        return True
+    else:
+        return False
+    
+
 def cmpVideosByViews(video1, video2):
-    """
-    Devuelve verdadero (True) si los 'views' de video1 son menores que los del video2
-    Args:
-    video1: informacion del primer video que incluye su valor 'views'
-    video2: informacion del segundo video que incluye su valor 'views'
-    """
-    if video1['views'] < video2['views']:
+    if video1['views'] > video2['views']:
         return True
     else:
         return False
@@ -185,24 +214,13 @@ def funcompare(video1,video2):
     else:
         return 0
 
-
+"----------------------------------------------------------------------------------------------"
 # Funciones de ordenamiento
-def sortvideos(catalog, size, metodo_ord):
-    sub_list = lt.subList(catalog['videos'], 0, size)
-    sub_list = sub_list.copy()
-    start_time = time.process_time()
-    if metodo_ord == "1":
-        sorted_list = selecc.sort(sub_list, cmpVideosByViews)
-    elif metodo_ord == "2":
-        sorted_list = insert.sort(sub_list, cmpVideosByViews)
-    elif metodo_ord == "3":
-        sorted_list = sa.sort(sub_list, cmpVideosByViews)
-    elif metodo_ord == "4":
-        sorted_list = qck.sort(sub_list, cmpVideosByViews)
-    elif metodo_ord == "5":
-        sorted_list = marg.sort(sub_list, cmpVideosByViews)
-        
-    stop_time = time.process_time()
-    elapsed_time_mseg = (stop_time - start_time)*1000
-    return elapsed_time_mseg, sorted_list
-     
+
+    
+
+                
+                
+
+            
+
